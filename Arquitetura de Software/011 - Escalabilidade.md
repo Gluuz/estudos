@@ -1,44 +1,84 @@
-## O que é escalabilidade?
+# Containers vs. Máquinas Virtuais
 
-De acordo com Elemar, fundador do site **arquiteturadesoftware.online**, escalabilidade é definida como:
+## Diferença Fundamental: Container vs. Máquina Virtual
 
-> "A capacidade de sistemas suportarem o aumento (ou a redução) dos workloads incrementando (ou reduzindo) o custo em menor ou igual proporção."
+Um container é diferente de uma máquina virtual (VM), e essa diferença é essencial para compreendermos como ambas tecnologias impactam o desempenho e a utilização de recursos.
 
-Ou seja, escalabilidade é a habilidade de aumentar ou diminuir a capacidade de processamento de um sistema proporcionalmente ao custo envolvido. Quanto maior o custo computacional, mais capacidade se pode adicionar, e, da mesma forma, é possível reduzir essa capacidade conforme os custos diminuem.
+### O Que É Uma Máquina Virtual (VM)?
+Uma máquina virtual executa um sistema operacional completo, incluindo:
+- **Kernel próprio**
+- **Hypervisor** – Camada de virtualização que gerencia e permite a execução de múltiplas VMs no mesmo hardware.
 
-## Escalabilidade vs Performance
+Essa abordagem resulta em:
+- **Alto consumo de recursos** (CPU, memória, etc.)
+- **Tempo de inicialização prolongado**
+- **Eficiência reduzida** em aplicações que exigem poucos recursos.
 
-Há uma distinção importante entre **escalabilidade** e **performance**:
+**Importante:** Máquinas virtuais são uma revolução na forma como trabalhamos. A maioria dos containers em cloud providers roda sobre VMs.
 
-- **Performance** foca em reduzir a **latência** e aumentar o **throughput**. Se queremos mais performance, o objetivo é diminuir o tempo de resposta e aumentar a quantidade de operações processadas por segundo.
-  
-- **Escalabilidade**, por outro lado, trata da capacidade de **aumentar ou diminuir** o throughput (quantidade de operações realizadas) conforme a capacidade computacional é ajustada (adicionada ou removida). Ou seja, ao aumentar os recursos computacionais, aumentamos o throughput, e ao reduzir os recursos, o throughput também diminui.
+### Como Funciona a Máquina Virtual?
+1. O hypervisor permite instalar diversos sistemas operacionais.
+2. Ao criar uma VM, você está criando um novo SO completo.
+3. É necessário:
+   - Instalar Linux (ou outro SO)
+   - Baixar pacotes
+   - Alocar recursos (memória, CPU, etc.)
+4. Mesmo que uma aplicação consuma 1 MB, o SO pode exigir **4 GB**.
+5. Cada VM demora para iniciar e configurar.
 
-Portanto, um sistema pode ser muito performático, mas isso não implica necessariamente que ele seja escalável. A escalabilidade está mais relacionada à capacidade de adaptar o sistema para diferentes níveis de demanda.
+### O Que É Um Container?
+Um container compartilha o kernel do sistema operacional host, executando apenas processos isolados. Isso torna:
+- **Mais leve**
+- **Mais rápido**
+- **Mais eficiente**
 
-## Escala Vertical e Escala Horizontal
+Containers possuem inicialização quase instantânea, semelhante a abrir e fechar um software. Exemplo:
+- Aplicação de 1 MB: o container consome cerca de **5 MB**, sem um SO completo.
 
-Quando falamos de escalabilidade, geralmente nos referimos a dois tipos: **escala vertical** e **escala horizontal**.
+### Imagens Clássicas de Comparativo (Docker)
+**Máquinas Virtuais (VMs):**
+- Infraestrutura -> Hypervisor -> VMs (cada VM com aplicação + SO)
+- Necessário criar uma VM para cada aplicação.
+- Escalar requer criar novas VMs, o que é demorado.
 
-### Escala Vertical
+**Containers:**
+- Infraestrutura -> SO -> Docker (runtime)
+- Docker gerencia aplicações (A, B, C, D, E, F) como processos isolados.
+- Permite rodar **milhares de containers** sem SOs duplicados.
 
-A escala vertical envolve o aumento de recursos computacionais em uma única máquina. Isso pode ser feito ao aumentar a memória RAM, CPU, armazenamento e velocidade de disco. Com mais recursos disponíveis, o sistema consegue lidar com uma maior carga de trabalho.
+### Docker e Containers
+O Docker funciona como:
+- **Ferramenta completa de containerização**
+- **Runtime de containers** (DockerD, daemon que gerencia containers)
+- Permite criar aplicações de forma escalável e eficiente.
 
-No entanto, a escalabilidade vertical tem suas limitações:
+Containers trazem uma economia significativa de recursos e agilidade na execução e distribuição de aplicações.
 
-- Existe um limite físico para o quanto uma máquina pode ser expandida. Nem sempre será possível adicionar mais hardware.
-- Colocar "todos os ovos na mesma cesta": se essa máquina falhar, todo o sistema pode ficar fora do ar, pois há uma dependência centralizada nela.
+---
 
-### Escala Horizontal
+## Docker e Container Runtimes
 
-A escala horizontal, por sua vez, envolve o aumento da quantidade de máquinas para distribuir a carga de trabalho. Ao invés de aumentar os recursos de uma única máquina, adicionamos mais servidores para lidar com as requisições. Para que isso funcione, é necessário utilizar algo como um **proxy reverso** ou um **load balancer** que distribua as requisições entre as várias máquinas de forma balanceada.
+Agora que entendemos mais sobre como funciona a ideia de container e a diferença entre uma máquina virtual e um container, vamos falar sobre o Docker e os container runtimes.
 
-Vantagens da escala horizontal:
+### O Que É um Container Runtime?
+Container runtime é um software que permite a execução de containers. Ele possui todas as especificações necessárias para que um container possa ser executado. Atualmente, essas especificações são padronizadas.
 
-- Não há necessidade de máquinas extremamente poderosas, apenas várias máquinas que podem trabalhar em conjunto.
-- Se uma máquina falhar, as outras continuam funcionando, garantindo maior disponibilidade do sistema.
+A Docker, junto com outras empresas, criou a **Open Containers Initiative (OCI)**, que estabelece uma padronização permitindo que qualquer container seja executado de forma consistente, independentemente do runtime utilizado. Por exemplo:
+- Podman (alternativa ao Docker) pode executar o mesmo container sem problemas.
 
-Hoje em dia, a **escala horizontal** é a abordagem mais comum, especialmente em sistemas distribuídos. No entanto, para que isso funcione bem, o software deve ser projetado para suportar essa arquitetura, algo que exige ajustes específicos.
+Essa padronização é crucial para garantir a interoperabilidade e facilitar o uso de containers em diferentes ambientes.
+
+### Container Runtimes e Docker
+Quando falamos de container runtimes, estamos nos referindo à ferramenta que executa containers e segue especificações para garantir compatibilidade. O curso é focado no Docker, então traremos mais informações sobre ele.
+
+**História dos Containers:**
+- Em 2008, surgiu o **LXC (Linux Containers)**, que utilizava:
+  - **Namespaces** (isolamento de processos, rede, etc.)
+  - **cgroups** (controle de recursos como CPU/memória)
+- O Docker, criado posteriormente, revolucionou a containerização ao simplificar e automatizar o processo.
+
+### Importante Saber
+- Docker não criou o conceito de container, mas aprimorou-o.
+- A Open Containers Initiative (​[opencontainers.org](https://opencontainers.org)​) fornece mais informações sobre padronização.
 
 
-Escalabilidade é sobre ajustar a capacidade de um sistema conforme a demanda muda, seja adicionando ou removendo recursos. A escala vertical foca no aumento dos recursos em uma única máquina, enquanto a escala horizontal distribui a carga entre várias máquinas. Cada abordagem tem suas vantagens e desvantagens, mas a escala horizontal é a mais utilizada atualmente, devido à sua flexibilidade e resiliência em caso de falhas.
