@@ -55,6 +55,49 @@ Diferentemente de algumas tecnologias de filas, que trabalham predominantemente 
     
 - Maior segurança e resistência a falhas.
     
+## Nomenclatura de Tópicos no Kafka
+
+A escolha dos nomes dos tópicos é fundamental para manter a organização, a padronização e a escalabilidade dos sistemas que utilizam Kafka. Um bom padrão de nomenclatura facilita o entendimento e o uso correto dos tópicos por diferentes times e sistemas.
+
+Uma analogia simples é imaginar o **tópico** como uma pasta em um sistema de arquivos, enquanto os eventos (mensagens) seriam os arquivos dentro dessa pasta. Dessa forma, o nome do tópico deve ser claro, descritivo e consistente.
+
+### Boas práticas para nomear tópicos
+
+- Use nomes que representem o **domínio** e o **conteúdo** do tópico, evitando nomes genéricos ou atrelados a uma aplicação específica.
+    
+- Defina um **padrão** (convenção) para o nome dos tópicos, como separar partes do nome por ponto (`.`), hífen (`-`) ou underline (`_`), e defina o significado de cada parte.
+    
+- Evite nomes que possam mudar com frequência, ou que estejam diretamente ligados a detalhes de implementação de um único serviço (a não ser que o tópico seja de uso exclusivamente interno).
+    
+- Utilize letras minúsculas e seja consistente no formato.
+    
+
+### Estrutura sugerida de nomenclatura
+
+Um padrão bastante utilizado segue o modelo:
+`<domínio>.<classificação>.<descrição>[.<grupo>]`
+
+**Onde:**
+
+- **Domínio:** Identifica o contexto principal do tópico (ex: `inventory`, `device`, `user`).
+    
+- **Classificação:** Define o tipo de evento ou finalidade do tópico (ex: `cdc` para change data capture, `fct` para fatos, `cmd` para comandos, `sys` para tópicos de sistema).
+    
+- **Descrição:** Dá mais detalhes sobre o objeto ou ação relacionada ao evento (ex: `warehouse`, `device`, `checkout`).
+    
+- **Grupo (opcional):** Pode ser usado para separar diferentes subconjuntos de dados ou usos específicos do mesmo tópico.
+    
+
+### Exemplos práticos
+
+- `inventory.cdc.warehouse`: Tópico no domínio de inventário, com eventos de alteração de dados de um armazém.
+    
+- `device.cdc.device.modbus`: Eventos de alteração em dispositivos que usam o protocolo Modbus.
+    
+- `access.fct.login`: Fatos de login realizados por usuários.
+    
+- `system.sys.healthcheck`: Eventos internos de healthcheck de um sistema.
+    
 ### Entendendo Partições (Introdução)
 
 Embora não seja detalhado agora, é importante saber que cada tópico pode ser subdividido em **partições** para facilitar a escalabilidade e distribuição da carga entre múltiplos brokers no cluster Kafka. Cada partição mantém seu próprio log sequencial com offsets independentes.
